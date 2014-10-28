@@ -23,18 +23,17 @@ void loop(void){
   BMP.getEvent(&event);
   
   /* Convert altitude, meters to feet */
-  float feet = BMP.pressureToAltitude(SENSORS_PRESSURE_SEALEVELHPA, event.pressure) * 3.28084;
   Serial.print("Altitude:    ");
-  Serial.print(feet);
+  Serial.print(BMP.pressureToAltitude(SENSORS_PRESSURE_SEALEVELHPA, event.pressure) * 3.28084);
   Serial.println(" ft");
   
   float temperature;
   BMP.getTemperature(&temperature);
   /* Convert temperature, celsius to fahrenheit */
-  float fahrenheit = temperature * 33.8;
+  temperature = temperature*33.8;
   Serial.print("Temperature: ");
-  Serial.print(fahrenheit);
-  Serial.print(" F");
+  Serial.print(temperature);
+  Serial.println(" F");
   
   /* Standard Atmospheric Pressure = 1,013.25 hPA */
   Serial.print("Pressure:    ");
