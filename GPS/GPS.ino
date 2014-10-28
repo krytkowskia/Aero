@@ -17,7 +17,7 @@ void setup(){
 
 void loop(){
   /* Check if the GPS is spitting out bytes for the Due to read */
-  if(Serial1.avaiable() > 0){
+  if(Serial1.available() > 0){
     /* Read the coordinate string from the GPS */
     char character = Serial1.read();
     
@@ -31,28 +31,53 @@ void loop(){
         int direct;
 
         /* Place coordinates into char array point to separate into tokens */
-        coordinates.toCharArray(coords, coordinate.length());
+        coordinates.toCharArray(coords, coordinates.length());
         /* Break NMEA into coordinate tokens */
-        tokens = strtok_r(coordPtr, ",", &coordsPtr);
+        tokens = strtok_r(coordsPtr, ",", &coordsPtr);
         while(tokens != NULL){
           /* Convert NMEA into Degrees, mins, seconds */
-          int degreeInt
-          int degree;
-          int minutes;
-          int seconds;
-          String compass;
+          if(direct == 3 || direct == 5){
+            int degreeInt;
+            int degree;
+            int minutes;
+            int seconds;
+            String compass;
           
-          degreeInt = atoi(tokens)
-          degree = ((int)degreeInt) / 100;
-          minutes = degreeInt - (degree * 100);
-          seconds = (float) (atof(value) - (float)degreeInt) * 60.0;
+            degreeInt = atoi(tokens);
+            degree = ((int)degreeInt) / 100;
+            minutes = degreeInt - (degree * 100);
+            seconds = (float) (atof(tokens) - (float)degreeInt) * 60.0;
+            
+            if(direct == 3){
+              compass = " N";
+            } else if(direct == 5){
+              compass = " W";
+            }
+            char secondsBuffer[6];
+            char location[128];
+            
+            dtostrf(seconds, 6, 3, secondsBuffer);
+            sprintf(location, "%02d\xB0 %0sd' %s", degree, minutes, secondsBuffer);
+            Serial.println(location + compass);
+          }
+          direct++;
         }
+        /* Insert a blank line for formatting */
+        Serial.println();
       }
-      /* Check for the beginning of a coordinates */
-      /* Calculate the coordinates into degrees, mins, seconds */
+      /* Clear the coordinates for a new string */
+        coordinates = "";
     } else{
       /* If it's not the end of the coordinates, add to coordinates string until complete */
       coordinates += character;
     }
   }
+}
+
+// Arduino IDE libraries do not include dtostrf()
+char *dtostrf (double val, signed char width, unsigned char prec, char *sout) {
+  char format[20];
+  sprintf(format, "%%%d.%df", width, prec);
+  sprintf(sout, format, val);
+  return sout;
 }
