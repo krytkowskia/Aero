@@ -27,7 +27,8 @@ void loop(){
       if(coordinates.startsWith("$GPRMC")){
         char coords[128];
         char *coordsPtr = coords;
-        char *tokens; 
+        char *tokens;
+        int direct;
 
         /* Place coordinates into char array point to separate into tokens */
         coordinates.toCharArray(coords, coordinate.length());
@@ -35,6 +36,16 @@ void loop(){
         tokens = strtok_r(coordPtr, ",", &coordsPtr);
         while(tokens != NULL){
           /* Convert NMEA into Degrees, mins, seconds */
+          int degreeInt
+          int degree;
+          int minutes;
+          int seconds;
+          String compass;
+          
+          degreeInt = atoi(tokens)
+          degree = ((int)degreeInt) / 100;
+          minutes = degreeInt - (degree * 100);
+          seconds = (float) (atof(value) - (float)degreeInt) * 60.0;
         }
       }
       /* Check for the beginning of a coordinates */
